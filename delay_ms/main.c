@@ -1,0 +1,35 @@
+#include "config.c"
+#include "def_pinos.h"
+
+void delay_ms(unsigned int t)
+{
+	TMOD &= 0xFC;
+	TMOD |= 0x01;
+
+	while(t)
+	{
+		TR0 = 0;
+		TF0 = 0;
+		TL0 = 0x58;
+		TH0 = 0x9E;
+		TR0 = 1;
+		
+		while (TF0 != 1);
+
+		t--;
+	}
+}
+
+void main (void)
+{
+	Init_Device();
+	SFRPAGE = LEGACY_PAGE;
+
+	while(1)
+	{
+		P0_0 = 1;
+		delay_ms(500);
+		P0_0 = 0;
+		delay_ms(500);
+	}
+}
